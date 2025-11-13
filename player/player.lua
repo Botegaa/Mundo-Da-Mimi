@@ -140,7 +140,7 @@ function updatePlayer(dt, objetos)
 end
 
 function drawMundo(objetos)
-    if not visivel then visivel = true end -- GARANTIA QUE NÃO SOME
+    if not visivel then visivel = true end 
 
     local screenW, screenH = love.graphics.getWidth(), love.graphics.getHeight()
     local camX = math.max(0, math.min(x - screenW/2, bgW - screenW))
@@ -150,7 +150,7 @@ function drawMundo(objetos)
     love.graphics.translate(-camX, -camY)
     love.graphics.draw(background, 0, 0, 0, bgScale, bgScale)
 
-    -- desenha objetos atrás
+    
     for _, obj in ipairs(objetos) do obj:draw(bgScale) end
 
     -- player

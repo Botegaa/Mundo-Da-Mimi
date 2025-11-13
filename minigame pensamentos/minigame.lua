@@ -14,7 +14,7 @@ end
 
 function Minigame.start()
     vidas = 3
-    acabou = false
+    acabou = false      
     dificuldade = 1
     tempoTotal = 0
     player.reset()
@@ -35,19 +35,16 @@ function Minigame.update(dt)
 
     pensamentos.update(dt, yBasePlayer)
 
-    -- Colisão e dano
     for i = #pensamentos.lista, 1, -1 do
         local p = pensamentos.lista[i]
         if checaColisao(px, py, pw, ph, p.x, p.y, p.w, p.h) then
             if not player.isInvencivel() then
                 vidas = vidas - 1
-                player.setInvencivel() 
+                player.setInvencivel()
                 table.remove(pensamentos.lista, i)
+
                 if vidas <= 0 then
-                acabou = true
-                if _G.voltarAoMundo then
-                    _G.voltarAoMundo() -- volta automaticamente
-                    end
+                    acabou = true
                 end
             end
         end
@@ -70,8 +67,6 @@ function Minigame.draw()
         love.graphics.setColor(0, 0, 0)
         love.graphics.print("Pressione R para continuar...", love.graphics.getWidth() / 2 - 90, love.graphics.getHeight() / 2 + 30)
     end
-
-    love.graphics.setColor(1, 1, 1)
 end
 
 function Minigame.keypressed(key)
@@ -80,6 +75,11 @@ function Minigame.keypressed(key)
     elseif key == "f1" then
         player.toggleDebug()
     end
+end
+
+
+function Minigame.isFinished()
+    return acabou
 end
 
 return Minigame
