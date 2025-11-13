@@ -102,12 +102,11 @@ function Desatencao.draw()
         love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
     end
 
-    if finalizado then
-        love.graphics.setColor(0, 0, 0, 0.8)
-        love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
-        love.graphics.setColor(1, 1, 1)
-        love.graphics.printf("TU TA LOUCA JA, R PRA COMECAR DNV.", 0, love.graphics.getHeight()/2 - 30, love.graphics.getWidth(), "center")
-    end
+   
+end
+
+function Desatencao.isFinished()
+    return finalizado
 end
 
 return Desatencao
