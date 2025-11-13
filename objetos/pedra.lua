@@ -3,7 +3,7 @@ local Objeto = require("objetos.objeto")
 local Pedra = {}
 
 function Pedra.l(x, y)
-    return Objeto:new("assets/cenario/Pedra (L).png", x, y, {
+    return Objeto:new("assets/cenario/Pedras/Pedra (L).png", x, y, {
         offsetX = 30,
         offsetY = 20,
         w = 150,

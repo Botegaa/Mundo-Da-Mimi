@@ -1,12 +1,35 @@
-local criarArvore = require("objetos.arvore")
+local Arvore = require("objetos.arvore")
 local Pedra = require("objetos.pedra")
+local Borboleta = require("objetos.borboleta")
+local Passaro = require("objetos.passaro")
+local Lago = require("objetos.lago")
 
 function initObjetos()
+    local lago = Lago(680, 480)          
+    local peixe = lago:getPeixe()        
+
     objetos = {
-        criarArvore(1900, 500),
-        Pedra.l(500, 1300),
-        Pedra.m(1000, 1000),
-        criarArvore(1200,700),
-        Pedra.m(200, 1000)
+        lago,                            
+        peixe,                          
+        Borboleta(2050, 1500),
+        Pedra.l(3127, 1750),
+        Passaro(3127, 1750, true),
     }
+end
+
+
+function love.update(dt)
+    for _, obj in ipairs(objetos) do
+        if obj.update then
+            obj:update(dt)
+        end
+    end
+end
+
+function love.draw()
+    for _, obj in ipairs(objetos) do
+        if obj.draw then
+            obj:draw()
+        end
+    end
 end
