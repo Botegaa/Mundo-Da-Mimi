@@ -3,6 +3,7 @@ local Pedra = require("objetos.pedra")
 local Borboleta = require("objetos.borboleta")
 local Passaro = require("objetos.passaro")
 local Lago = require("objetos.lago")
+local Bella = require("objetos.bella")
 
 function initObjetos()
     local lago = Lago(680, 480)          
@@ -32,4 +33,12 @@ function love.draw()
             obj:draw()
         end
     end
+end
+
+
+
+
+
+function _G.bellaAparecer()
+    table.insert(objetos, Bella)  
 end

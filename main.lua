@@ -1,14 +1,15 @@
 require("objetos.objetos")
 require("player.player")
 
-local desatencao = require("minigame desatencao.minigame")
-local pensamentos = require("minigame pensamentos.minigame")
-local respiracao = require("minigame respiracao.minigame")
-local Dialogo = require("objetos.dialogo")
+local desatencao   = require("minigame desatencao.minigame")
+local pensamentos  = require("minigame pensamentos.minigame")
+local respiracao   = require("minigame respiracao.minigame")
+local Dialogo      = require("objetos.dialogo")
 
 local estado = "mundo"
 
-local falasDesatencao = {
+
+local falas1 = {
     "Bella? Bella, onde voce esta?",
     "Bella?! BELLA?!",
     "Ela se foi para sempre, Mimi... Voce a perdeu por sua culpa...",
@@ -16,12 +17,25 @@ local falasDesatencao = {
     "Nao... nao... isso nao pode estar acontecendo! Bella, volta!"
 }
 
+
 local falasRespiracao = {
     "Mimi, minha querida, respire comigo. Voce nao esta sozinha.",
     "Mas... mas eu perdi a Bella! Eu sou terrivel! Nao consigo fazer nada direito!",
-    "Crianca, todos nos cometemos erros. O importante agora eh acalmar seu coracao para pensar com clareza.",
-    "Vamos fazer juntos: inspire por 4... segure por 4... e expire por 6..."
+    "Crianca, todos nos cometemos erros.",
+    "O importante agora e acalmar seu coracao...",
+    "Inspire pelo nariz contando ate 4...",
+    "Segure por 4...",
+    "Expire contando ate 6..."
 }
+
+
+local falasBellaFinal = {
+    "Eu... eu estou me sentindo um pouco melhor...",
+    "Muito bem! Agora sua mente esta mais clara.",
+    "Voce consegue procurar onde a Belinha esta?",
+    "Consigo sim! Acho que ela esta aqui perto."
+}
+
 
 function iniciarMinigame()
     estado = "desatencao"
@@ -29,20 +43,58 @@ function iniciarMinigame()
 end
 _G.iniciarMinigame = iniciarMinigame
 
-function voltarAoMundo()
-    estado = "mundo"
+
+local function iniciarDialogo1()
+    estado = "dialogo1"
+    Dialogo.start(falas1)
+
+    Dialogo.onFinish = function()
+        estado = "pensamentos"
+        pensamentos.start()
+    end
 end
-_G.voltarAoMundo = voltarAoMundo
+
+
+local function iniciarDialogoRespiracao()
+    estado = "dialogo_respiracao"
+    Dialogo.start(falasRespiracao)
+
+    Dialogo.onFinish = function()
+        estado = "respiracao"
+        respiracao.load()
+    end
+end
+
+
+local function iniciarDialogoBellaFinal()
+    estado = "dialogo_bella"
+    Dialogo.start(falasBellaFinal)
+
+    Dialogo.onFinish = function()
+        estado = "mundo"
+        if _G.bellaAparecer then
+            _G.bellaAparecer()
+        end
+    end
+end
+
+_G.fimDoJogo = false
+
+
+
 
 function love.load()
     love.keyboard.setKeyRepeat(true)
-    love.window.setMode(0, 0, {fullscreen = false})
+    love.window.setMode(0, 0, {fullscreen=false})
 
     initPlayer()
     initObjetos()
 end
 
+
 function love.update(dt)
+
+    if _G.fimDoJogo then return end 
 
     if estado == "mundo" then
         for _, obj in ipairs(objetos) do
@@ -52,45 +104,40 @@ function love.update(dt)
 
     elseif estado == "desatencao" then
         desatencao.update(dt)
-
-        -- APENAS ADICIONADO PROTEÇÃO:
-        if desatencao.isFinished and desatencao.isFinished() then
-            estado = "dialogo"
-            Dialogo.start(falasDesatencao)
-
-            Dialogo.onFinish = function()
-                estado = "pensamentos"
-                pensamentos.start()
-            end
+        if desatencao.isFinished() then
+            iniciarDialogo1()
         end
 
-    elseif estado == "dialogo" then
+    elseif estado == "dialogo1" then
         Dialogo.update(dt)
 
     elseif estado == "pensamentos" then
         pensamentos.update(dt)
-
-        if pensamentos.isFinished and pensamentos.isFinished() then
-            estado = "dialogo_resp"
-            Dialogo.start(falasRespiracao)
-
-            Dialogo.onFinish = function()
-                estado = "respiracao"
-                respiracao.load()
-            end
+        if pensamentos.isFinished() then
+            iniciarDialogoRespiracao()
         end
 
-    elseif estado == "dialogo_resp" then
+    elseif estado == "dialogo_respiracao" then
         Dialogo.update(dt)
 
     elseif estado == "respiracao" then
         respiracao.update(dt)
+        if respiracao.isFinished() then
+            iniciarDialogoBellaFinal()
+        end
+
+    elseif estado == "dialogo_bella" then
+        Dialogo.update(dt)
     end
 end
 
+
 function love.keypressed(key)
 
-    if estado == "dialogo" or estado == "dialogo_resp" then
+    if _G.fimDoJogo then return end
+
+    -- diálogos
+    if estado == "dialogo1" or estado == "dialogo_respiracao" or estado == "dialogo_bella" then
         if key == "return" or key == "space" then
             Dialogo.next()
         end
@@ -108,12 +155,13 @@ function love.keypressed(key)
     end
 
     if estado == "respiracao" then
-        local r = respiracao.keypressed(key)
-        if r == "fim" then
-            voltarAoMundo()
+        if respiracao.keypressed(key) == "fim" then
+            iniciarDialogoBellaFinal()
         end
+        return
     end
 end
+
 
 function love.draw()
 
@@ -126,14 +174,35 @@ function love.draw()
     elseif estado == "desatencao" then
         desatencao.draw()
 
-    elseif estado == "dialogo" or estado == "dialogo_resp" then
+    elseif estado == "dialogo1" then
         drawMundo(objetos)
         Dialogo.draw()
 
     elseif estado == "pensamentos" then
         pensamentos.draw()
 
+    elseif estado == "dialogo_respiracao" then
+        drawMundo(objetos)
+        Dialogo.draw()
+
     elseif estado == "respiracao" then
         respiracao.draw()
+
+    elseif estado == "dialogo_bella" then
+        drawMundo(objetos)
+        Dialogo.draw()
+    end
+
+ 
+    if _G.fimDoJogo then
+        love.graphics.setColor(0,0,0,0.65)
+        love.graphics.rectangle("fill",0,0,love.graphics.getWidth(),love.graphics.getHeight())
+        love.graphics.setColor(1,1,1)
+        love.graphics.printf(
+            "Mimi encontrou a Bella.\nFim da demo ",
+            0, love.graphics.getHeight()/2 - 20,
+            love.graphics.getWidth(),
+            "center"
+        )
     end
 end

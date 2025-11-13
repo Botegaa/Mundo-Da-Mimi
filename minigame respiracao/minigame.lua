@@ -1,6 +1,5 @@
 local respiracao = {}
 
-
 local fase = "inspirar"
 local tempo = 0
 
@@ -21,23 +20,8 @@ local calmaMax = 100
 local acabouRespirar = false
 
 local centerX, centerY
+
 local scale = 0.8
-
-
-function respiracao.reset()
-    fase = "inspirar"
-    tempo = 0
-    contador = duracao[fase]
-    currentFrame = 1
-    calma = 0
-    acabouRespirar = false
-end
-
-
-function respiracao.start()
-    respiracao.reset()
-end
-
 
 function respiracao.load()
     for i = 1, totalFrames do
@@ -46,9 +30,9 @@ function respiracao.load()
 
     centerX = love.graphics.getWidth() / 2
     centerY = love.graphics.getHeight() / 2
+
+    resetFase()
 end
-
-
 
 local function tamanhoPorFase()
     if fase == "inspirar" then
@@ -60,34 +44,33 @@ local function tamanhoPorFase()
     end
 end
 
-local function resetFaseInterno()
+function resetFase()
     tempo = 0
     currentFrame = 1
     contador = duracao[fase]
 end
 
-
 function respiracao.update(dt)
     if acabouRespirar then return end
 
-  
     if fase == "inspirar" then
-        if not love.keyboard.isDown("space") then resetFaseInterno() return end
+        if not love.keyboard.isDown("space") then resetFase(); return end
     elseif fase == "segurar" then
-        if not love.keyboard.isDown("c") then resetFaseInterno() return end
+        if not love.keyboard.isDown("c") then resetFase(); return end
     elseif fase == "expirar" then
-        if not love.keyboard.isDown("v") then resetFaseInterno() return end
+        if not love.keyboard.isDown("v") then resetFase(); return end
     end
 
     tempo = tempo + dt
-    contador = math.max(0, math.ceil(duracao[fase] - tempo))
+    contador = duracao[fase] - tempo
+    if contador < 0 then contador = 0 end
+    contador = math.ceil(contador)
 
-  
     local progresso = tempo / duracao[fase]
     currentFrame = math.floor(progresso * totalFrames)
-    currentFrame = math.max(1, math.min(currentFrame, totalFrames))
+    if currentFrame < 1 then currentFrame = 1 end
+    if currentFrame > totalFrames then currentFrame = totalFrames end
 
-    
     if tempo >= duracao[fase] then
         if fase == "inspirar" then
             fase = "segurar"
@@ -101,17 +84,15 @@ function respiracao.update(dt)
             fase = "inspirar"
         end
 
-        resetFaseInterno()
+        resetFase()
     end
 end
-
 
 function respiracao.keypressed(key)
     if acabouRespirar and key == "return" then
         return "fim"
     end
 end
-
 
 function respiracao.draw()
     love.graphics.setColor(1,1,1)
@@ -132,10 +113,8 @@ function respiracao.draw()
     end
 
     love.graphics.printf(
-        string.format(
-            "Fase: %s   |   %d segundos\n[ESPAÇO] inspirar  |  [C] segurar  |  [V] expirar",
-            fase, contador
-        ),
+        string.format("Fase: %s   |   %d segundos\n[ESPACO] inspirar  |  [C] segurar  |  [V] expirar",
+        fase, contador),
         0, 40,
         love.graphics.getWidth(),
         "center"
@@ -151,13 +130,24 @@ function respiracao.draw()
 
     if acabouRespirar then
         love.graphics.printf(
-            "Respiração concluída.\nPressione ENTER para continuar.",
+            "Respiracao concluida.\nPressione ENTER para continuar.",
             0,
             love.graphics.getHeight()/2 + 180,
             love.graphics.getWidth(),
             "center"
         )
     end
+end
+
+function respiracao.isFinished()
+    return acabouRespirar
+end
+
+function respiracao.start()
+    acabouRespirar = false
+    calma = 0
+    fase = "inspirar"
+    resetFase()
 end
 
 return respiracao
