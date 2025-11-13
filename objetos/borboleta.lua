@@ -26,7 +26,7 @@ function Borboleta(x, y)
     borboleta.scale = 0.8
     borboleta.withOutline = false
 
-    -- 🔹 interatividade adicionada
+    
     borboleta.isInterativo = true
     borboleta.tipo = "borboleta"
     borboleta.interagido = false
@@ -45,7 +45,7 @@ function Borboleta(x, y)
         if px and py then
             local dx, dy = px - self.x, py - self.y
             local dist = math.sqrt(dx*dx + dy*dy)
-            self.withOutline = (dist < 650) and not self.interagido
+            self.withOutline = (dist < 350) and not self.interagido
         end
     end
 

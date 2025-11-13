@@ -10,30 +10,30 @@ local estado = "mundo"
 
 
 local falas1 = {
-    "Bella? Bella, onde voce esta?",
-    "Bella?! BELLA?!",
-    "Ela se foi para sempre, Mimi... Voce a perdeu por sua culpa...",
-    "Se voce nao fosse tao distraida... Se voce prestasse atencao... Bella estaria aqui!",
-    "Nao... nao... isso nao pode estar acontecendo! Bella, volta!"
+    "Mimi:\n Bella? Bella, onde voce esta?",
+    "Mimi:\nBella?! BELLA?!",
+    "Voz do Medo:\nEla se foi para sempre, Mimi... Voce a perdeu por sua culpa...",
+    "Voz do Medo:\nSe voce nao fosse tao distraida... Se voce prestasse atencao... Bella estaria aqui!",
+    "Mimi:\nNao... nao... isso nao pode estar acontecendo! Bella, volta!"
 }
 
 
 local falasRespiracao = {
-    "Mimi, minha querida, respire comigo. Voce nao esta sozinha.",
-    "Mas... mas eu perdi a Bella! Eu sou terrivel! Nao consigo fazer nada direito!",
-    "Crianca, todos nos cometemos erros.",
-    "O importante agora e acalmar seu coracao...",
-    "Inspire pelo nariz contando ate 4...",
-    "Segure por 4...",
-    "Expire contando ate 6..."
+    "Mestre da respiracao:\nMimi, minha querida, respire comigo. Voce nao esta sozinha.",
+    "Mimi:\nMas... mas eu perdi a Bella! Eu sou terrivel! Nao consigo fazer nada direito!",
+    "Mestre da respiracao:\nCrianca, todos nos cometemos erros.",
+    "Mestre da respiracao:\nO importante agora e acalmar seu coracao...",
+    "Mestre da respiracao:\nInspire pelo nariz contando ate 4...",
+    "Mestre da respiracao:\nSegure por 4...",
+    "Mestre da respiracao:\nExpire contando ate 6..."
 }
 
 
 local falasBellaFinal = {
-    "Eu... eu estou me sentindo um pouco melhor...",
-    "Muito bem! Agora sua mente esta mais clara.",
-    "Voce consegue procurar onde a Belinha esta?",
-    "Consigo sim! Acho que ela esta aqui perto."
+    "Mimi:\nEu... eu estou me sentindo um pouco melhor...",
+    "Mestre da respiracao:\nMuito bem! Agora sua mente esta mais clara.",
+    "Mestre da respiracao:\nVoce consegue procurar onde a Belinha esta?",
+    "Mimi:\nConsigo sim! Acho que ela esta aqui perto."
 }
 
 
@@ -136,7 +136,7 @@ function love.keypressed(key)
 
     if _G.fimDoJogo then return end
 
-    -- diálogos
+   
     if estado == "dialogo1" or estado == "dialogo_respiracao" or estado == "dialogo_bella" then
         if key == "return" or key == "space" then
             Dialogo.next()
@@ -194,15 +194,21 @@ function love.draw()
     end
 
  
-    if _G.fimDoJogo then
-        love.graphics.setColor(0,0,0,0.65)
-        love.graphics.rectangle("fill",0,0,love.graphics.getWidth(),love.graphics.getHeight())
-        love.graphics.setColor(1,1,1)
-        love.graphics.printf(
-            "Mimi encontrou a Bella.\nFim da demo ",
-            0, love.graphics.getHeight()/2 - 20,
-            love.graphics.getWidth(),
-            "center"
-        )
-    end
+   if _G.fimDoJogo then
+
+    love.graphics.setColor(0, 0, 0, 1)
+    love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
+
+   
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.printf(
+        "Mimi encontrou a Bella.\nFim da demo",
+        0,
+        love.graphics.getHeight() / 2 - 20,
+        love.graphics.getWidth(),
+        "center"
+    )
+
+    return 
+end
 end

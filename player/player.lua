@@ -14,7 +14,7 @@ local interacoes = {
     passaro = false
 }
 
-local visivel = true -- CORREÇÃO IMPORTANTE
+local visivel = true 
 
 function initPlayer()
     x, y = 2000, 700
@@ -59,9 +59,6 @@ function initPlayer()
     }
 end
 
-local function checaColisao(ax, ay, aw, ah, bx, by, bw, bh)
-    return ax < bx + bw and bx < ax + aw and ay < by + bh and by < ay + ah
-end
 
 function player.setVisible(v)
     visivel = v
@@ -71,7 +68,7 @@ function updatePlayer(dt, objetos)
     local andando = false
     local novoX, novoY = x, y
 
-    -- movimentos
+
     if love.keyboard.isDown("d") then
         novoX = x + velocidade * dt
         direcao = "direita"
@@ -92,7 +89,7 @@ function updatePlayer(dt, objetos)
         andando = true
     end
 
-    -- limites
+    
     novoX = math.max(0, math.min(novoX, bgW - playerHitbox.w))
     novoY = math.max(0, math.min(novoY, bgH - playerHitbox.h))
 
@@ -125,7 +122,7 @@ function updatePlayer(dt, objetos)
         end
     end
 
-    -- interação
+
     if love.keyboard.isDown("e") and objetoProximo then
         if not objetoProximo.interagido then
             objetoProximo:interagir()

@@ -23,7 +23,13 @@ local centerX, centerY
 
 local scale = 0.8
 
+
+local bgImage
+
 function respiracao.load()
+  
+    bgImage = love.graphics.newImage("assets/respiracao/Breathe_BG.png")
+
     for i = 1, totalFrames do
         frames[i] = love.graphics.newImage("assets/respiracao/Breathe" .. i .. ".png")
     end
@@ -62,6 +68,7 @@ function respiracao.update(dt)
     end
 
     tempo = tempo + dt
+
     contador = duracao[fase] - tempo
     if contador < 0 then contador = 0 end
     contador = math.ceil(contador)
@@ -83,7 +90,6 @@ function respiracao.update(dt)
             end
             fase = "inspirar"
         end
-
         resetFase()
     end
 end
@@ -95,6 +101,17 @@ function respiracao.keypressed(key)
 end
 
 function respiracao.draw()
+
+    if bgImage then
+        love.graphics.setColor(1,1,1)
+        love.graphics.draw(
+            bgImage,
+            0, 0, 0,
+            love.graphics.getWidth() / bgImage:getWidth(),
+            love.graphics.getHeight() / bgImage:getHeight()
+        )
+    end
+
     love.graphics.setColor(1,1,1)
 
     local img = frames[tamanhoPorFase()]

@@ -1,6 +1,15 @@
 local Pensamentos = {}
 Pensamentos.lista = {}
 
+local SCALE = 0.2   
+
+
+local imagens = {}
+for i = 1, 8 do
+    local path = string.format("assets/medo/balao_minigame_medo%d.png", i)
+    imagens[i] = love.graphics.newImage(path)
+end
+
 local spawnTimer = 0
 local spawnInterval = 0.8
 local speedBase = 160
@@ -19,17 +28,26 @@ function Pensamentos.spawn()
     quantidade = math.min(quantidade, 4)
 
     for i = 1, quantidade do
+
+        local img = imagens[math.random(1, #imagens)]
+        local realW = img:getWidth()
+        local realH = img:getHeight()
+
+      
+        local w = realW * SCALE
+        local h = realH * SCALE
+
         table.insert(Pensamentos.lista, {
-            x = math.random(0, love.graphics.getWidth() - 30),
-            y = -30,
-            w = 30,
-            h = 30,
-            speed = speedBase + math.random(-20, 20)
+            x = math.random(0, love.graphics.getWidth() - w),
+            y = -h,
+            w = w,
+            h = h,
+            speed = speedBase + math.random(-20, 20),
+            img = img
         })
     end
 end
 
--- recebe yBasePlayer,
 function Pensamentos.update(dt, yBasePlayer)
     spawnTimer = spawnTimer + dt
     if spawnTimer > spawnInterval then
@@ -40,7 +58,7 @@ function Pensamentos.update(dt, yBasePlayer)
     for i = #Pensamentos.lista, 1, -1 do
         local p = Pensamentos.lista[i]
         p.y = p.y + p.speed * dt
-        -- Remove quando passar da base do player
+
         if p.y > yBasePlayer then
             table.remove(Pensamentos.lista, i)
         end
@@ -48,11 +66,11 @@ function Pensamentos.update(dt, yBasePlayer)
 end
 
 function Pensamentos.draw()
-    love.graphics.setColor(0, 0, 0)
-    for _, p in ipairs(Pensamentos.lista) do
-        love.graphics.rectangle("fill", p.x, p.y, p.w, p.h)
-    end
     love.graphics.setColor(1, 1, 1)
+    for _, p in ipairs(Pensamentos.lista) do
+       
+        love.graphics.draw(p.img, p.x, p.y, 0, SCALE, SCALE)
+    end
 end
 
 function Pensamentos.reset()
@@ -64,4 +82,3 @@ function Pensamentos.reset()
 end
 
 return Pensamentos
-
